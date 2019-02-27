@@ -1,10 +1,14 @@
 # diplacement
 # rotation
 # squeezing
+from qiskit import QuantumCircuit,QuantumRegister,ClassicalRegister
+from qiskit import execute,Aer
 
 import numpy as np
 from scipy.linalg import expm
-# import numpy.linalg.matrix_power as mat_pow
+import matplotlib.pyplot as plt
+
+import argparse
 
 class TwoQMode():
 
@@ -70,3 +74,58 @@ class QMode():
         j = np.complex(0,1)
         arg = j*phi*np.matmul(self.a_dag,self.a)
         return expm(arg)
+
+
+    def test(self,op='D',vals=None,v0=None):
+
+        if vals is None:
+            vals = [0.0,0.1,0.2,0.3,0.4]
+
+        if v0 is None:
+            v0 = np.zeros(self.n_dim)
+            v0[0]=1
+
+        allowed_op = ['S','D','R']
+        if op not in allowed_op:
+            print('Operation \'%s\' not recognized. Must be in'%(op),allowed_op)
+            return
+
+        for v in vals:
+            mat = eval('self.{}({})'.format(op,v))
+            state0 = np.matmul(mat,v0)
+            state0 = state0*state0.conj()
+            plt.plot(state0,'-o',ms=3,lw=1,alpha=0.5,label='{}'.format(round(v,3)))
+
+        plt.xticks(range(self.n_dim),range(self.n_dim))
+        plt.xlabel('Qubit')
+        plt.legend(title=op)
+        plt.title('Results for {} Qubits per Mode'.format(self.n_qubits_per_mode))
+        plt.pause(0.1)
+
+if __name__=='__main__':
+
+    # parse some optional arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n','--number_per_mode', help='Number of qubits per mode',choices=[1,2,3,4],nargs='?',const=2,type=int)
+
+    args = parser.parse_args()
+
+    if args.number_per_mode is None:
+        args.number_per_mode = 2
+    m = QMode(args.number_per_mode)
+
+    # standard init
+    v0 = np.zeros(m.n_dim)
+    v0[0] = 1
+
+    # displacement
+    dmat = m.D(0.1)
+
+    new_input= np.matmul(dmat,v0)
+
+    # build circuit
+    q = QuantumRegister(name='qr',size=args.number_per_mode)
+    c = ClassicalRegister(name='cr',size=args.number_per_mode)
+    circ = QuantumCircuit(q,c)
+
+    circ.initialize(new_input, q)
