@@ -24,7 +24,7 @@ def N(n):
     # Number operator matrix for nxn
     return np.matmul(a_dag(n),a(n))
 
-def D(z,n):
+def D(alpha,n):
     # Displacement operator matrix for nxn
-    arg = z*a_dag(n)+z*a(n)
+    arg = alpha*a_dag(n)-np.conjugate(alpha)*a(n)
     return np.expm1(arg)
