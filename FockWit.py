@@ -6,15 +6,31 @@ import numpy as np
 from scipy.linalg import expm
 # import numpy.linalg.matrix_power as mat_pow
 
-class MultiMode():
+class TwoQMode():
 
-    def __init__(self,n_modes,n_qubits_per_mode=2):
-        pass
+    def __init__(self,n_qubits_per_mode=2):
 
-    def S2(self):
-        # 2 mode squeezing
-        # beam splitters
-        pass
+        self.mode = QMode(n_qubits_per_mode)
+        I = np.eye(self.mode.n_dim)
+
+        self.a1 = np.kron(self.mode.a,I)
+        self.a2 = np.kron(I,self.mode.a)
+        self.a1_dag = self.a1.conj().T
+        self.a2_dag = self.a2.conj().T
+
+    def S2(self,z):
+        #two mode squeeze
+        a12 = np.matmul(self.a1,self.a2)
+        a12_dag = np.matmul(self.a1_dag,self.a2_dag)
+        arg = np.conjugate(z)*a12 - z*a12_dag
+        return expm(arg)
+
+    def BS(self,phi):
+        a12dag = np.matmul(self.a1,self.a2_dag)
+        a1dag2 = np.matmul(self.a1_dag,self.a2)
+        arg = phi*a12dag - np.conjuagate(phi)*a1dag2
+        return expm(arg)
+
 
 class QMode():
     """
