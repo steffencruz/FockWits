@@ -7,10 +7,12 @@ import numpy as np
 class MultiMode():
 
     def __init__(self,n_modes,n_qubits_per_mode=2):
+        pass
 
-    def S2(self,):
+    def S2(self):
         # 2 mode squeezing
         # beam splitters
+        pass
 
 class QMode():
     """
