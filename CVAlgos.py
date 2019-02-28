@@ -1,7 +1,7 @@
 from CVCircuit import CVCircuit
 import numpy as np
-from strawberryfields import ops
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister
+from ops import Interferometer
 
 def gbs(z, U, n_qubits_per_mode=2, n_qumodes=4):
     qr = QuantumRegister(n_qubits_per_mode*n_qumodes)
@@ -10,7 +10,7 @@ def gbs(z, U, n_qubits_per_mode=2, n_qumodes=4):
 
     cv_circuit = CVCircuit(circuit, qr, n_qubits_per_mode)
 
-    interferometer = ops.Interferometer(U)
+    interferometer = Interferometer(U)
 
     for n in range(4):
         cv_circuit.SGate(z, n)
