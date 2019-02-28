@@ -1,8 +1,8 @@
 # diplacement
 # rotation
 # squeezing
-from qiskit import QuantumCircuit,QuantumRegister,ClassicalRegister
-from qiskit import execute,Aer
+# from qiskit import QuantumCircuit,QuantumRegister,ClassicalRegister
+# from qiskit import execute,Aer
 
 import numpy as np
 from scipy.linalg import expm
@@ -15,6 +15,7 @@ class TwoQMode():
     def __init__(self,n_qubits_per_mode=2):
 
         self.mode = QMode(n_qubits_per_mode)
+        self.n_dim = self.mode.n_dim**2
         I = np.eye(self.mode.n_dim)
 
         self.a1 = np.kron(self.mode.a,I)
@@ -35,11 +36,11 @@ class TwoQMode():
         arg = phi*a12dag - np.conjugate(phi)*a1dag2
         return expm(arg)
 
-    def BHM(self,tmax,k,J=1,U=0.1):
+    def BHM(self,tmax,k,n=10,J=1,U=0.1):
         #Implement simple two-mode Bose-Hubbard simulation
         j = np.complex(0,1)
         BKR = {}
-        for t in np.linspace(0,tmax,10):
+        for t in np.linspace(0,tmax,n):
             for layer in range(k):
                 phi = -j*J*t/k
                 r = -U*t/(2*k)
