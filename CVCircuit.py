@@ -9,7 +9,7 @@ from qiskit.tools.visualization._circuit_visualization import circuit_drawer
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 from qiskit import Aer, execute, compile
 
-from FockWit import QMode
+from CVGates import CVGates
 
 class CVCircuit:
     def __init__(self, circuit, qr, n_qubits_per_mode=2):
@@ -20,14 +20,15 @@ class CVCircuit:
 
     def DGate(self, alpha, qumode):
         qmr = (qr[qumode])
-        circuit.unitary(gates.D(alpha), *(qr[i] for i in range(qumode, qumode+self.n_qubits_per_mode)))
+        circuit.unitary(self.gates.D(alpha), *(qr[i] for i in range(qumode, qumode+self.n_qubits_per_mode)))
 
+    def SGate(self, z, qumode):
+        qmr = (qr[qumode])
+        circuit.unitary(self.gates.S(z), *(qr[i] for i in range(qumode, qumode+self.n_qubits_per_mode)))
 
-def DGate(circuit, qr, cv, qumode, alpha):
-    # U = np.identity(4)
-    U = cv.S(alpha)
-    # print(U@U.T.conj())
-    circuit.unitary(U, qr[qumode], qr[qumode+1], qr[qumode+2])
+    def RGate(self, phi, qumode):
+        qmr = (qr[qumode])
+        circuit.unitary(self.gates.R(phi), *(qr[i] for i in range(qumode, qumode+self.n_qubits_per_mode)))
 
 if __name__ == '__main__':
     # ===== Constants =====
@@ -45,7 +46,8 @@ if __name__ == '__main__':
 
     # ==== Build circuit ====
 
-    cv_circuit.DGate(alpha, 0)
+    cv_circuit.RGate(alpha, 0)
+    # cv_circuit.BSGate(theta, phi, 0, 1)
     # circuit.measure(qr, cr)
     print(circuit)
 
