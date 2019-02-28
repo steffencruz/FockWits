@@ -32,8 +32,23 @@ class TwoQMode():
     def BS(self,phi):
         a12dag = np.matmul(self.a1,self.a2_dag)
         a1dag2 = np.matmul(self.a1_dag,self.a2)
-        arg = phi*a12dag - np.conjuagate(phi)*a1dag2
+        arg = phi*a12dag - np.conjugate(phi)*a1dag2
         return expm(arg)
+
+    def BHM(self,tmax,k,J=1,U=0.1):
+        #Implement simple two-mode Bose-Hubbard simulation
+        j = np.complex(0,1)
+        BKR = {}
+        for t in np.linspace(0,tmax,10):
+            for layer in range(k):
+                phi = -j*J*t/k
+                r = -U*t/(2*k)
+                BS = self.BS(phi)
+                K = np.kron(self.mode.K(r),self.mode.K(r))
+                R = np.kron(self.mode.R(-r),self.mode.R(-r))
+                BK = np.matmul(BS,K)
+                BKR[t] = np.matmul(BK,R)
+        return BKR
 
 
 class QMode():
