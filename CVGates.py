@@ -1,8 +1,8 @@
-# diplacement
+# diplacementn_qubits_per_mode=2
 # rotation
 # squeezing
-# from qiskit import QuantumCircuit,QuantumRegister,ClassicalRegister
-# from qiskit import execute,Aer
+from qiskit import QuantumCircuit,QuantumRegister,ClassicalRegister
+from qiskit import execute,Aer
 
 import numpy as np
 from scipy.linalg import expm
@@ -12,57 +12,11 @@ import argparse
 
 class CVGates:
     def __init__(self,n_qubits_per_mode=2):
-
-        self.mode = QMode(n_qubits_per_mode)
-        self.n_dim = self.mode.n_dim**2
-        I = np.eye(self.mode.n_dim)
-
-        self.a1 = np.kron(self.mode.a,I)
-        self.a2 = np.kron(I,self.mode.a)
-        self.a1_dag = self.a1.conj().T
-        self.a2_dag = self.a2.conj().T
-
-    def S2(self,z):
-        #two mode squeeze
-        a12 = np.matmul(self.a1,self.a2)
-        a12_dag = np.matmul(self.a1_dag,self.a2_dag)
-        arg = np.conjugate(z)*a12 - z*a12_dag
-        return expm(arg)
-
-    def BS(self,phi):
-        a12dag = np.matmul(self.a1,self.a2_dag)
-        a1dag2 = np.matmul(self.a1_dag,self.a2)
-        arg = phi*a12dag - np.conjugate(phi)*a1dag2
-        return expm(arg)
-
-    def BHM(self,tmax,k,n=10,J=1,U=0.1):
-        #Implement simple two-mode Bose-Hubbard simulation
-        j = np.complex(0,1)
-        BKR = {}
-        for t in np.linspace(0,tmax,n):
-            for layer in range(k):
-                phi = -j*J*t/k
-                r = -U*t/(2*k)
-                BS = self.BS(phi)
-                K = np.kron(self.mode.K(r),self.mode.K(r))
-                R = np.kron(self.mode.R(-r),self.mode.R(-r))
-                BK = np.matmul(BS,K)
-                BKR[t] = np.matmul(BK,R)
-        return BKR
-
-
-class QMode():
-    """
-    Class to handle single mode operations
-    """
-
-    def __init__(self,n_qubits_per_mode=2):
-
         self.n_qubits_per_mode = n_qubits_per_mode
         self.n_dim = 2**n_qubits_per_mode
-
+        
         I = np.eye(self.n_dim)
-
+        
         # Annihilation operator
         self.a = np.zeros((self.n_dim,self.n_dim))
         for i in range(self.n_dim-1):
@@ -111,7 +65,7 @@ class QMode():
     def BS(self, phi):
         a12dag = np.matmul(self.a1, self.a2_dag)
         a1dag2 = np.matmul(self.a1_dag, self.a2)
-        arg = phi*a12dag - np.conjuagate(phi)*a1dag2
+        arg = phi*a12dag - np.conjugate(phi)*a1dag2
         return expm(arg)
 
     def test(self,op='D',vals=None,v0=None):
