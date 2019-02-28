@@ -75,6 +75,11 @@ class QMode():
         arg = j*phi*np.matmul(self.a_dag,self.a)
         return expm(arg)
 
+    def K(self,kappa):
+        j = np.complex(0,1)
+        arg = j*kappa*np.matmul(self.N,self.N)
+        return expm(arg)
+
 
     def test(self,op='D',vals=None,v0=None):
 
