@@ -96,8 +96,10 @@ class QMode():
             state0 = state0*state0.conj()
             plt.plot(state0,'-o',ms=3,lw=1,alpha=0.5,label='{}'.format(round(v,3)))
 
-        plt.xticks(range(self.n_dim),range(self.n_dim))
+        labels = ['{:04b}'.format(i) for i in range(self.n_dim)]
+        plt.xticks(range(self.n_dim),labels,rotation=80)
         plt.xlabel('Qubit')
+        plt.ylabel('Probability')
         plt.legend(title=op)
         plt.title('Results for {} Qubits per Mode'.format(self.n_qubits_per_mode))
         plt.pause(0.1)
